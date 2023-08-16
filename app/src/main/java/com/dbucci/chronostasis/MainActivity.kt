@@ -3,6 +3,7 @@ package com.dbucci.chronostasis
 import android.annotation.SuppressLint
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.Toast
 import com.dbucci.chronostasis.databinding.ActivityMainBinding
 import java.util.Timer
 import kotlin.concurrent.fixedRateTimer
@@ -11,9 +12,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private var timer: Timer? = null
     private var isTimerRunning = false
-    var timerMin = 25
-    var timerSec = 0
-    var timerRunning = false
+    private var timerMin = 25
+    private var timerSec = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -22,21 +22,12 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         binding.buttonStopStart.setOnClickListener {
-            timerRunning = !timerRunning
+            isTimerRunning = !isTimerRunning
 
-            val btnStr = if(timerRunning) {
-                "Stop"
-            } else {
-                "Resume"
-            }
+            val buttonText = if (isTimerRunning) "Stop" else "Resume"
+            binding.buttonStopStart.text = buttonText
 
-            binding.buttonStopStart.text = btnStr
-
-            if(timerRunning) {
-                startTimer()
-            } else {
-                stopTimer()
-            }
+            if (isTimerRunning) startTimer() else stopTimer()
         }
     }
 
@@ -48,7 +39,7 @@ class MainActivity : AppCompatActivity() {
 
     @SuppressLint("SetTextI18n")
     private fun startTimer() {
-        if (!isTimerRunning) {
+        if (isTimerRunning) {
             timer = fixedRateTimer("timer", false, 0L, 1000) {
                 this@MainActivity.runOnUiThread {
                     if (timerMin > 0 && timerSec == 0) {
@@ -56,9 +47,7 @@ class MainActivity : AppCompatActivity() {
                         timerSec = 60
                     }
 
-                    if (timerSec > 0) {
-                        timerSec--
-                    }
+                    if (timerSec > 0) timerSec--
 
                     val minutesStr = String.format("%02d", timerMin)
                     val secondsStr = String.format("%02d", timerSec)
@@ -66,8 +55,6 @@ class MainActivity : AppCompatActivity() {
                     binding.textViewTimerValue.text = "${minutesStr}:${secondsStr}"
                 }
             }
-
-            isTimerRunning = true
         }
     }
 }
