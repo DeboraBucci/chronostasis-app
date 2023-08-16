@@ -3,7 +3,6 @@ package com.dbucci.chronostasis
 import android.annotation.SuppressLint
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.Toast
 import com.dbucci.chronostasis.databinding.ActivityMainBinding
 import java.util.Timer
 import kotlin.concurrent.fixedRateTimer
@@ -31,16 +30,11 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.buttonReset.setOnClickListener {
-            stopTimer()
-
             timerMin = 25
             timerSec = 0
 
-            val minutesStr = String.format("%02d", timerMin)
-            val secondsStr = String.format("%02d", timerSec)
-
-            binding.buttonStopStart.text = "Start"
-            binding.textViewTimerValue.text = "${minutesStr}:${secondsStr}"
+            stopTimer()
+            setupPomodoroTextView()
         }
     }
 
@@ -50,24 +44,26 @@ class MainActivity : AppCompatActivity() {
         isTimerRunning = false
     }
 
-    @SuppressLint("SetTextI18n")
     private fun startTimer() {
-        if (isTimerRunning) {
-            timer = fixedRateTimer("timer", false, 0L, 1000) {
-                this@MainActivity.runOnUiThread {
-                    if (timerMin > 0 && timerSec == 0) {
-                        timerMin--
-                        timerSec = 60
-                    }
-
-                    if (timerSec > 0) timerSec--
-
-                    val minutesStr = String.format("%02d", timerMin)
-                    val secondsStr = String.format("%02d", timerSec)
-
-                    binding.textViewTimerValue.text = "${minutesStr}:${secondsStr}"
+        timer = fixedRateTimer("pomodoro-timer", false, 0L, 1000) {
+            this@MainActivity.runOnUiThread {
+                if (timerMin > 0 && timerSec == 0) {
+                    timerMin--
+                    timerSec = 60
                 }
+
+                if (timerSec > 0) timerSec--
+
+                setupPomodoroTextView()
             }
         }
+    }
+
+    @SuppressLint("SetTextI18n")
+    private fun setupPomodoroTextView() {
+        val minutesStr = String.format("%02d", timerMin)
+        val secondsStr = String.format("%02d", timerSec)
+
+        binding.textViewTimerValue.text = "${minutesStr}:${secondsStr}"
     }
 }
