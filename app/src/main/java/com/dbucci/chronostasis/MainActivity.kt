@@ -20,28 +20,30 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        binding.buttonStopStart.setOnClickListener {
-            isTimerRunning = !isTimerRunning
-
-            val buttonText = if (isTimerRunning) "Stop" else "Resume"
-            binding.buttonStopStart.text = buttonText
-
-            if (isTimerRunning) startTimer() else stopTimer()
-        }
-
-        binding.buttonReset.setOnClickListener {
-            timerMin = 25
-            timerSec = 0
-
-            stopTimer()
-            setupPomodoroTextView()
-        }
+        setupClickListeners()
     }
 
-    private fun stopTimer() {
-        timer?.cancel()
-        timer = null
-        isTimerRunning = false
+    private fun setupClickListeners() {
+        binding.buttonStopStart.setOnClickListener { pauseAndResumeHandler() }
+        binding.buttonReset.setOnClickListener { resetTimerHandler() }
+    }
+
+    private fun pauseAndResumeHandler() {
+        isTimerRunning = !isTimerRunning
+
+        val buttonText = if (isTimerRunning) "Stop" else "Resume"
+        binding.buttonStopStart.text = buttonText
+
+        if (isTimerRunning) startTimer() else stopTimer()
+    }
+
+    private fun resetTimerHandler() {
+        timerMin = 25
+        timerSec = 0
+        binding.buttonStopStart.text = "Start"
+
+        stopTimer()
+        setupPomodoroTextView()
     }
 
     private fun startTimer() {
@@ -57,6 +59,12 @@ class MainActivity : AppCompatActivity() {
                 setupPomodoroTextView()
             }
         }
+    }
+
+    private fun stopTimer() {
+        timer?.cancel()
+        timer = null
+        isTimerRunning = false
     }
 
     @SuppressLint("SetTextI18n")
