@@ -29,6 +29,19 @@ class MainActivity : AppCompatActivity() {
 
             if (isTimerRunning) startTimer() else stopTimer()
         }
+
+        binding.buttonReset.setOnClickListener {
+            stopTimer()
+
+            timerMin = 25
+            timerSec = 0
+
+            val minutesStr = String.format("%02d", timerMin)
+            val secondsStr = String.format("%02d", timerSec)
+
+            binding.buttonStopStart.text = "Start"
+            binding.textViewTimerValue.text = "${minutesStr}:${secondsStr}"
+        }
     }
 
     private fun stopTimer() {
