@@ -26,6 +26,20 @@ class MainActivity : AppCompatActivity() {
     private fun setupClickListeners() {
         binding.buttonStopStart.setOnClickListener { pauseAndResumeHandler() }
         binding.buttonReset.setOnClickListener { resetTimerHandler() }
+
+        binding.imageButtonSimplePomodoro.setOnClickListener { changeTimerValue(25) }
+        binding.imageButtonDoublePomodoro.setOnClickListener { changeTimerValue(50) }
+        binding.imageButtonShortBreak.setOnClickListener { changeTimerValue(5) }
+        binding.imageButtonLongBreak.setOnClickListener { changeTimerValue(15) }
+
+        binding.imageButtonStopwatch.setOnClickListener {}
+    }
+
+    private fun changeTimerValue(time: Int) {
+        resetTimerHandler()
+
+        timerMin = time
+        setupPomodoroTextView()
     }
 
     private fun pauseAndResumeHandler() {
