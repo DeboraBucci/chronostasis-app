@@ -3,12 +3,15 @@ package com.dbucci.chronostasis
 import android.annotation.SuppressLint
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.ImageButton
+import androidx.core.content.ContextCompat
 import com.dbucci.chronostasis.databinding.ActivityMainBinding
 import java.util.Timer
 import kotlin.concurrent.fixedRateTimer
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
+
     private var timer: Timer? = null
     private var isTimerRunning = false
     private var timerMin = 25
@@ -27,16 +30,23 @@ class MainActivity : AppCompatActivity() {
         binding.buttonStopStart.setOnClickListener { pauseAndResumeHandler() }
         binding.buttonReset.setOnClickListener { resetTimerHandler() }
 
-        binding.imageButtonSimplePomodoro.setOnClickListener { changeTimerValue(25) }
-        binding.imageButtonDoublePomodoro.setOnClickListener { changeTimerValue(50) }
-        binding.imageButtonShortBreak.setOnClickListener { changeTimerValue(5) }
-        binding.imageButtonLongBreak.setOnClickListener { changeTimerValue(15) }
+        val simplePomodoroBtn = binding.imageButtonSimplePomodoro
+        val doublePomodoroBtn = binding.imageButtonDoublePomodoro
+        val shortBreakBtn = binding.imageButtonShortBreak
+        val longBreakBtn = binding.imageButtonLongBreak
+        val stopwatchBtn = binding.imageButtonStopwatch
+
+        simplePomodoroBtn.setOnClickListener { changeTimerValue(25, simplePomodoroBtn) }
+        doublePomodoroBtn.setOnClickListener { changeTimerValue(50, doublePomodoroBtn) }
+        shortBreakBtn.setOnClickListener { changeTimerValue(5, shortBreakBtn) }
+        longBreakBtn.setOnClickListener { changeTimerValue(15, longBreakBtn) }
 
         binding.imageButtonStopwatch.setOnClickListener {}
     }
 
-    private fun changeTimerValue(time: Int) {
+    private fun changeTimerValue(time: Int, button: ImageButton) {
         resetTimerHandler()
+        changeImageButtonColors(button)
 
         timerMin = time
         setupPomodoroTextView()
@@ -51,6 +61,22 @@ class MainActivity : AppCompatActivity() {
         if (isTimerRunning) startTimer() else stopTimer()
     }
 
+    private fun changeImageButtonColors(button: ImageButton) {
+        val inactiveColor = ContextCompat.getColorStateList(this, R.color.light_grey)
+        val activeColor = ContextCompat.getColorStateList(
+            this,
+            com.google.android.material.R.color.design_default_color_primary
+        )
+
+        binding.imageButtonStopwatch.imageTintList = inactiveColor
+        binding.imageButtonSimplePomodoro.imageTintList = inactiveColor
+        binding.imageButtonDoublePomodoro.imageTintList = inactiveColor
+        binding.imageButtonShortBreak.imageTintList = inactiveColor
+        binding.imageButtonLongBreak.imageTintList = inactiveColor
+
+        button.imageTintList = activeColor
+    }
+
     private fun resetTimerHandler() {
         timerMin = 25
         timerSec = 0
@@ -61,7 +87,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun startTimer() {
-        timer = fixedRateTimer("pomodoro-timer", false, 0L, 1000) {
+        timer = fixedRateTimer("timer", false, 0L, 1000) {
             this@MainActivity.runOnUiThread {
                 if (timerMin > 0 && timerSec == 0) {
                     timerMin--
