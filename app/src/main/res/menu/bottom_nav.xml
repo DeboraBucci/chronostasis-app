@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/nav_timers"
+        android:icon="@drawable/ic_simple_pomodoro_24"
+        android:title="Timers" />
+
+    <item
+        android:id="@+id/nav_timers_count"
+        android:icon="@drawable/ic_timers_count_24"
+        android:title="Count" />
+</menu>
