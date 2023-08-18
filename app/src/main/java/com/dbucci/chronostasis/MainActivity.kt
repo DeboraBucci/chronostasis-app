@@ -122,15 +122,19 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun startStopwatch() {
-        if (timerSec == 59) {
-            timerMin++
-            timerSec = 0
-        } else if (timerMin == 59) {
-            timerHr++
-            timerMin = 0
-            timerSec = 0
+        if (timerHr >= 99 && timerMin >= 59 && timerSec >= 59) {
+            stopTimer()
         } else {
-            timerSec++
+            if (timerSec == 59 && timerMin != 59) {
+                timerMin++
+                timerSec = 0
+            } else if (timerMin == 59 && timerSec == 59 ) {
+                timerHr++
+                timerMin = 0
+                timerSec = 0
+            } else {
+                timerSec++
+            }
         }
     }
 
