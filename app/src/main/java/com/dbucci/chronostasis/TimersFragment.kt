@@ -12,10 +12,8 @@ import java.util.Timer
 import java.util.TimerTask
 import kotlin.concurrent.fixedRateTimer
 
-
 class TimersFragment : Fragment() {
     private lateinit var binding: FragmentTimersBinding
-
 
     private var timer: Timer? = null
 

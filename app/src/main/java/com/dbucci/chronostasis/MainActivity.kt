@@ -2,15 +2,10 @@ package com.dbucci.chronostasis
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.Menu
 import android.view.MenuItem
-import android.widget.ImageButton
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.commit
 import com.dbucci.chronostasis.databinding.ActivityMainBinding
 import com.google.android.material.navigation.NavigationBarView
-import java.util.Timer
-import kotlin.concurrent.fixedRateTimer
 
 class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListener {
     private lateinit var binding: ActivityMainBinding
@@ -21,7 +16,6 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListen
         setContentView(binding.root)
 
         binding.bottomNav.setOnItemSelectedListener(this)
-
     }
 
     override fun onNavigationItemSelected(item: MenuItem) = when (item.itemId) {
@@ -45,6 +39,4 @@ class MainActivity : AppCompatActivity(), NavigationBarView.OnItemSelectedListen
 
         return true
     }
-
-
 }
