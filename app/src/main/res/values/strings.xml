@@ -1,6 +1,8 @@
 <resources>
     <string name="app_name">Chronostasis</string>
     <string name="app_title">Chronostasis</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string name="type_of_timer_description">type of timer</string>
+    <string name="delete_item_description">delete item</string>
+    <string name="edit_item_description">edit item</string>
 </resources>
