@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/dialog_bg"
+    android:orientation="vertical">
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_marginBottom="300dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Tag">
+        <androidx.appcompat.widget.AppCompatEditText
+            android:textSize="20dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="Study"/>
+    </com.google.android.material.textfield.TextInputLayout>
+</LinearLayout>
