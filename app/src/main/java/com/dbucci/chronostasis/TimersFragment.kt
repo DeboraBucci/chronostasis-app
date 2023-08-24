@@ -1,16 +1,20 @@
 package com.dbucci.chronostasis
 
+import android.app.Dialog
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.view.Gravity
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.Window
 import android.widget.ImageButton
 import androidx.core.content.ContextCompat
 import com.dbucci.chronostasis.databinding.FragmentTimersBinding
 import java.util.Timer
 import java.util.TimerTask
-import kotlin.concurrent.fixedRateTimer
 
 class TimersFragment : Fragment() {
     private lateinit var binding: FragmentTimersBinding
@@ -38,6 +42,19 @@ class TimersFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         setupClickListeners()
+
+        binding.linearLayoutTag.setOnClickListener {
+            val dialog = Dialog(requireContext())
+            dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+            dialog.setContentView(R.layout.bottom_sheet_layout)
+
+            dialog.show()
+
+            dialog.window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+            dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+            dialog.window?.attributes?.windowAnimations = R.style.DialogAnimation
+            dialog.window?.setGravity(Gravity.BOTTOM)
+        }
     }
 
     private fun setupClickListeners() {
