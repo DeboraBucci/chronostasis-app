@@ -13,22 +13,11 @@ import android.view.Window
 import android.widget.ImageButton
 import androidx.core.content.ContextCompat
 import com.dbucci.chronostasis.databinding.FragmentTimersBinding
-import java.util.Timer
-import java.util.TimerTask
 
 class TimersFragment : Fragment() {
     private lateinit var binding: FragmentTimersBinding
-
-    private var timer: Timer? = null
-
-    private var isPomodoro = true
+    private var myTimer: MyTimer? = null
     private var isTimerRunning = false
-
-    private var timerHr = 0
-    private var timerMin = 25
-    private var timerSec = 0
-
-    private var selectedTimerMin = 25
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -50,7 +39,10 @@ class TimersFragment : Fragment() {
 
             dialog.show()
 
-            dialog.window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+            dialog.window?.setLayout(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+            )
             dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
             dialog.window?.attributes?.windowAnimations = R.style.DialogAnimation
             dialog.window?.setGravity(Gravity.BOTTOM)
@@ -61,27 +53,59 @@ class TimersFragment : Fragment() {
         binding.buttonStopStart.setOnClickListener { stopStartResumeHandler() }
         binding.buttonReset.setOnClickListener { resetTimersHandler() }
 
+        myTimer = MyTimer(
+            "pomodoro",
+            binding.textViewTagName.text.toString(),
+            androidx.constraintlayout.widget.R.color.abc_color_highlight_material
+        )
+
         val simplePomodoroBtn = binding.imageButtonSimplePomodoro
         val doublePomodoroBtn = binding.imageButtonDoublePomodoro
         val shortBreakBtn = binding.imageButtonShortBreak
         val longBreakBtn = binding.imageButtonLongBreak
         val stopwatchBtn = binding.imageButtonStopwatch
 
-        simplePomodoroBtn.setOnClickListener { changeTimerValuesHandler(25, simplePomodoroBtn) }
-        doublePomodoroBtn.setOnClickListener { changeTimerValuesHandler(50, doublePomodoroBtn) }
-        shortBreakBtn.setOnClickListener { changeTimerValuesHandler(5, shortBreakBtn) }
-        longBreakBtn.setOnClickListener { changeTimerValuesHandler(15, longBreakBtn) }
-        stopwatchBtn.setOnClickListener { changeTimerValuesHandler(0, stopwatchBtn, false) }
+        simplePomodoroBtn.setOnClickListener {
+            changeTimerValuesHandler(
+                "pomodoro",
+                simplePomodoroBtn
+            )
+        }
+        doublePomodoroBtn.setOnClickListener {
+            changeTimerValuesHandler(
+                "double-pomodoro",
+                doublePomodoroBtn
+            )
+        }
+        shortBreakBtn.setOnClickListener {
+            changeTimerValuesHandler(
+                "short-break",
+                shortBreakBtn
+            )
+        }
+        longBreakBtn.setOnClickListener {
+            changeTimerValuesHandler(
+                "long-break",
+                longBreakBtn
+            )
+        }
+        stopwatchBtn.setOnClickListener {
+            changeTimerValuesHandler(
+                "stopwatch",
+                stopwatchBtn
+            )
+        }
     }
 
     private fun changeTimerValuesHandler(
-        time: Int,
+        type: String,
         button: ImageButton,
-        isPomodoroTimer: Boolean = true
     ) {
-        isPomodoro = isPomodoroTimer
-        timerMin = time
-        selectedTimerMin = time
+        myTimer = MyTimer(
+            type,
+            binding.textViewTagName.text.toString(),
+            androidx.constraintlayout.widget.R.color.abc_color_highlight_material
+        )
 
         resetTimersHandler()
         changeImageButtonColors(button)
@@ -94,7 +118,7 @@ class TimersFragment : Fragment() {
         val buttonText = if (isTimerRunning) "Stop" else "Resume"
         binding.buttonStopStart.text = buttonText
 
-        if (isTimerRunning) startTimerHandler() else stopTimer()
+        if (isTimerRunning) myTimer?.startTimer(requireActivity(), ::setupTimeTextView) else myTimer?.stopTimer()
     }
 
     private fun changeImageButtonColors(button: ImageButton) {
@@ -117,69 +141,14 @@ class TimersFragment : Fragment() {
     }
 
     private fun resetTimersHandler() {
-        timerHr = 0
-        timerMin = if (isPomodoro) selectedTimerMin else 0
-        timerSec = 0
-
+        isTimerRunning = false
+        myTimer?.resetTimer()
         binding.buttonStopStart.text = "Start"
-
-        stopTimer()
         setupTimeTextView()
     }
 
-    private fun startTimerHandler() {
-        timer = Timer()
-        timer?.scheduleAtFixedRate(object : TimerTask() {
-            override fun run() {
-                requireActivity().runOnUiThread {
-                    if (isPomodoro) startPomodoro()
-                    else startStopwatch()
-
-                    setupTimeTextView()
-                }
-            }
-        }, 0L, 1000)
-    }
-
-    private fun startPomodoro() {
-        if (timerMin > 0 && timerSec == 0) {
-            timerMin--
-            timerSec = 60
-        }
-
-        if (timerSec > 0) timerSec--
-    }
-
-    private fun startStopwatch() {
-        if (timerHr >= 99 && timerMin >= 59 && timerSec >= 59) {
-            stopTimer()
-        } else {
-            if (timerSec == 59 && timerMin != 59) {
-                timerMin++
-                timerSec = 0
-            } else if (timerMin == 59 && timerSec == 59) {
-                timerHr++
-                timerMin = 0
-                timerSec = 0
-            } else {
-                timerSec++
-            }
-        }
-    }
-
-    private fun stopTimer() {
-        timer?.cancel()
-        timer = null
-        isTimerRunning = false
-    }
 
     private fun setupTimeTextView() {
-        val hoursStr = String.format("%02d", timerHr)
-        val minutesStr = String.format("%02d", timerMin)
-        val secondsStr = String.format("%02d", timerSec)
-
-        val finalStr = "${if (!isPomodoro) "$hoursStr:" else ""}${minutesStr}:${secondsStr}"
-
-        binding.textViewTimerValue.text = finalStr
+        binding.textViewTimerValue.text = myTimer?.getTime()
     }
 }
